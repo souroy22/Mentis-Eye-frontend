@@ -33,7 +33,7 @@ const SignupForm = ({ setUser }: PROP_TYPE) => {
     username: "",
     password: "",
   });
-  const [errors, setErrors] = useState<ERRORS_TYPE>({
+  const [errors] = useState<ERRORS_TYPE>({
     name: null,
     username: null,
     password: null,

@@ -26,7 +26,7 @@ type ERRORS_TYPE = {
 
 const LoginForm = ({ setUser }: PROP_TYPE) => {
   const [data, setData] = useState<DATA_TYPE>({ username: "", password: "" });
-  const [errors, setErrors] = useState<ERRORS_TYPE>({
+  const [errors] = useState<ERRORS_TYPE>({
     username: null,
     password: null,
   });

@@ -54,7 +54,7 @@ const UserForm = ({
     userPhone: "",
     database: null,
   });
-  const [errors, setErrors] = useState<ERRORS_TYPE>({
+  const [errors] = useState<ERRORS_TYPE>({
     name: null,
     userEmail: null,
     userPhone: null,
