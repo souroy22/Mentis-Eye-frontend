@@ -1,0 +1,19 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap");
+
+body {
+  width: 100svw;
+  height: 100svh;
+  overflow: hidden;
+  font-family: "Open Sans", sans-serif;
+  background-color: #ebf0f7;
+}
+
+.loading-spinner {
+  height: 20px !important;
+  width: 20px !important;
+  color: white !important;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
