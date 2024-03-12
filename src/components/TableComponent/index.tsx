@@ -10,7 +10,11 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { setSortBy, setSortOrder } from "../../store/global/globalReducer";
+import {
+  setLoading,
+  setSortBy,
+  setSortOrder,
+} from "../../store/global/globalReducer";
 import "./style.css";
 import { getRecords } from "../../api/record.api";
 import { setRecords } from "../../store/record/recordReducer";
@@ -31,6 +35,7 @@ const TableComponent = () => {
   const { records } = useSelector((state: RootState) => state.recordReducer);
 
   const handleSort = async (value: string) => {
+    dispatch(setLoading(true));
     const order = !sortOrder ? "asc" : sortOrder === "asc" ? "desc" : "asc";
     dispatch(setSortBy(value));
     dispatch(setSortOrder(order));
@@ -46,6 +51,7 @@ const TableComponent = () => {
         totalCount: Number(res.totalCount),
       })
     );
+    dispatch(setLoading(false));
   };
 
   return (

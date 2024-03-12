@@ -74,18 +74,20 @@ const UserForm = ({ handleClose }: PROP_TYPE) => {
     try {
       await createRecord(data);
       notification.success("Successfully created record");
-      const res = await getRecords(selectedOption.value, {
-        page: 1,
-        searchValue,
-        sortBy,
-        sortOrder,
-      });
-      dispatch(
-        setRecords({
-          records: res.records,
-          totalCount: Number(res.totalCount),
-        })
-      );
+      if (data.database && data.database === selectedOption.value) {
+        const res = await getRecords(data.database, {
+          page: 1,
+          searchValue,
+          sortBy,
+          sortOrder,
+        });
+        dispatch(
+          setRecords({
+            records: res.records,
+            totalCount: Number(res.totalCount),
+          })
+        );
+      }
       handleClose();
     } catch (error) {
       if (error instanceof Error) {

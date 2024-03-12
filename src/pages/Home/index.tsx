@@ -60,6 +60,7 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
   const { totalCount } = useSelector((state: RootState) => state.recordReducer);
 
   const handleGetRecords = async (database: string, params: PARAMS_TYPE) => {
+    dispatch(setLoading(true));
     const res = await getRecords(database, params);
     dispatch(
       setRecords({
@@ -67,6 +68,7 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
         totalCount: Number(res.totalCount),
       })
     );
+    dispatch(setLoading(false));
   };
 
   const addQuery = (key: string, value: string) => {
@@ -83,14 +85,13 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
   const handleChange = (value: string) => {
     dispatch(setSearchValue(value));
     addQuery("search", value);
-    dispatch(setLoading(true));
+
     newFn(selectedOption.value, {
       page: 1,
       sortBy,
       sortOrder,
       searchValue: value,
     });
-    dispatch(setLoading(false));
   };
 
   const onLoad = async () => {
@@ -111,6 +112,16 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
 
   useEffect(() => {
     onLoad();
+    document.onclick = (event: any) => {
+      const mobileSidebar = document.getElementById("mobile-sidebar");
+      const menuIcon = document.getElementById("menu-icon");
+      if (
+        !mobileSidebar?.contains(event.target) &&
+        !menuIcon?.contains(event.target)
+      ) {
+        setopenSidebar(false);
+      }
+    };
   }, []);
 
   return (
@@ -132,7 +143,11 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
         />
       </Box>
       <Backdrop open={openSidebar} sx={{ zIndex: 99999 }}>
-        <Box className="mobile-sidebar">
+        <Box
+          className={`mobile-sidebar ${openSidebar ? "active" : ""}`}
+          sx={{ zIndex: 999999 }}
+          id="mobile-sidebar"
+        >
           <Sidebar
             handleClose={() => setopenSidebar(false)}
             searchParams={searchParams}
@@ -143,7 +158,10 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
       <Box className="main-content">
         <Box className="search-section">
           <Box className="menu-icon-container">
-            <MenuIcon onClick={() => setopenSidebar(!openSidebar)} />
+            <MenuIcon
+              onClick={() => setopenSidebar(!openSidebar)}
+              id="menu-icon"
+            />
           </Box>
           <FormControl>
             <TextField

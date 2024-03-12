@@ -13,6 +13,7 @@ import { RootState } from "../../store/store";
 import {
   SIDEBAR_OPTION_TYPE,
   setCurrentPage,
+  setLoading,
   setSelectedOption,
 } from "../../store/global/globalReducer";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -60,6 +61,7 @@ const Sidebar = ({ handleClose }: PROP_TYPE) => {
       return;
     }
     addQuery("database", option.value);
+    dispatch(setLoading(true));
     // setSearchParams({ ...searchParams, database: option });
     dispatch(setSelectedOption(option));
     dispatch(setCurrentPage(1));
@@ -70,6 +72,7 @@ const Sidebar = ({ handleClose }: PROP_TYPE) => {
       searchValue,
     });
     dispatch(setRecords(res));
+    dispatch(setLoading(false));
     handleClose && handleClose();
   };
 

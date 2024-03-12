@@ -63,11 +63,20 @@
 }
 
 .mobile-sidebar {
-  width: 0;
   position: absolute;
   top: 0;
   left: -250px;
-  transition: all 0.3s linear;
+  height: 100svh;
+  transition: all 300ms linear;
+  /* display: none; */
+  opacity: 0;
+}
+
+.active {
+  /* display: block; */
+  width: 250px;
+  left: 0;
+  opacity: 1;
 }
 
 @media screen and (max-width: 600px) {
@@ -90,11 +99,7 @@
   .menu-icon-container {
     display: inline-block;
   }
-  .mobile-sidebar {
-    position: absolute;
-    height: 100svh;
-    left: 0;
-  }
+
   .search-field {
     width: 150px;
   }
