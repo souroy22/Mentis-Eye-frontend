@@ -46,3 +46,32 @@
   font-weight: 600;
   text-decoration: underline;
 }
+
+@media screen and (max-width: 600px) {
+  .auth-wrapper-container {
+    flex-direction: column;
+  }
+
+  .auth-wrapper-left {
+    height: 50%;
+    width: 100%;
+  }
+
+  .auth-left-image {
+    width: 100%;
+    aspect-ratio: unset;
+    height: 300px;
+  }
+
+  .children-container {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .auth-wrapper-left {
+    height: 45%;
+    margin-bottom: 20px;
+  }
+}
