@@ -23,7 +23,7 @@ type PROP_TYPE = {
   setSearchParams: (value: any) => void;
 };
 
-const Sidebar = ({ searchParams, setSearchParams }: PROP_TYPE) => {
+const Sidebar = ({}: PROP_TYPE) => {
   const dispatch = useDispatch();
 
   const { searchValue, sortBy, sortOrder, selectedOption } = useSelector(
@@ -44,11 +44,21 @@ const Sidebar = ({ searchParams, setSearchParams }: PROP_TYPE) => {
     return avatarText;
   };
 
+  const addQuery = (key: string, value: string) => {
+    let pathname = location.pathname;
+    // returns path: '/app/books'
+    let searchParams = new URLSearchParams(location.search);
+    // returns the existing query string: '?type=fiction&author=fahid'
+    searchParams.set(key, value);
+    window.history.replaceState(null, "", `${pathname}?${searchParams}`);
+  };
+
   const handleClick = async (option: SIDEBAR_OPTION_TYPE) => {
     if (option.value === selectedOption.value) {
       return;
     }
-    setSearchParams({ ...searchParams, database: option });
+    addQuery("database", option.value);
+    // setSearchParams({ ...searchParams, database: option });
     dispatch(setSelectedOption(option));
     dispatch(setCurrentPage(1));
     const res = await getRecords(option.value, {

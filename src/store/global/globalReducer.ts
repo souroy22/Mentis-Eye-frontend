@@ -12,6 +12,7 @@ type GlobalStateType = {
   sortOrder: "asc" | "desc" | null;
   sortBy: string | null;
   currentPage: number;
+  loading: boolean;
 };
 
 const initialState: GlobalStateType = {
@@ -20,6 +21,7 @@ const initialState: GlobalStateType = {
   sortOrder: null,
   sortBy: null,
   currentPage: 1,
+  loading: false,
 };
 
 export const globalSlice = createSlice({
@@ -56,6 +58,12 @@ export const globalSlice = createSlice({
         currentPage: action.payload,
       };
     },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      return {
+        ...state,
+        loading: action.payload,
+      };
+    },
   },
 });
 
@@ -65,5 +73,6 @@ export const {
   setSortOrder,
   setSortBy,
   setCurrentPage,
+  setLoading,
 } = globalSlice.actions;
 export default globalSlice.reducer;

@@ -47,6 +47,7 @@ const TableComponent = () => {
       })
     );
   };
+
   return (
     <Paper sx={{ width: "100%", overflow: "hidden", height: "70%" }}>
       <TableContainer sx={{ maxHeight: "100%" }} className="table-section">
@@ -54,7 +55,7 @@ const TableComponent = () => {
           <TableHead>
             <TableRow>
               {columns.map((column) => (
-                <TableCell>
+                <TableCell key={column.value}>
                   <Box className="table-heading">
                     <Box className="label">{column.label}</Box>
                     {!sortBy || sortBy !== column.value ? (
@@ -99,7 +100,9 @@ const TableComponent = () => {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   {columns.map((column) => (
-                    <TableCell>{record[column.value]}</TableCell>
+                    <TableCell key={`${record.slug}-${column.value}`}>
+                      {record[column.value]}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))

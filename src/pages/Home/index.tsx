@@ -17,6 +17,7 @@ import UserForm from "../../components/UserForm";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setCurrentPage,
+  setLoading,
   setSearchValue,
 } from "../../store/global/globalReducer";
 import { RootState } from "../../store/store";
@@ -57,7 +58,6 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
 
   const handleGetRecords = async (database: string, params: PARAMS_TYPE) => {
     const res = await getRecords(database, params);
-    console.log("res", res);
     dispatch(
       setRecords({
         records: res.records,
@@ -66,19 +66,32 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
     );
   };
 
+  const addQuery = (key: string, value: string) => {
+    let pathname = location.pathname;
+    // returns path: '/app/books'
+    let searchParams = new URLSearchParams(location.search);
+    // returns the existing query string: '?type=fiction&author=fahid'
+    searchParams.set(key, value);
+    window.history.replaceState(null, "", `${pathname}?${searchParams}`);
+  };
+
   const newFn = useDebounce(handleGetRecords, 300);
 
   const handleChange = (value: string) => {
     dispatch(setSearchValue(value));
+    addQuery("search", value);
+    dispatch(setLoading(true));
     newFn(selectedOption.value, {
       page: 1,
       sortBy,
       sortOrder,
       searchValue: value,
     });
+    dispatch(setLoading(false));
   };
 
   const onLoad = async () => {
+    dispatch(setLoading(true));
     try {
       const recordRes = await getRecords(selectedOption.value);
       dispatch(
@@ -90,6 +103,7 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
     } catch (error) {
       notification.error("Something went wrong");
     }
+    dispatch(setLoading(false));
   };
 
   useEffect(() => {
@@ -150,6 +164,7 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
             variant="outlined"
             color="primary"
             onChange={async (_: ChangeEvent<unknown>, page: number) => {
+              addQuery("page", String(page));
               dispatch(setCurrentPage(page));
               const res = await getRecords(selectedOption.value, {
                 page,
