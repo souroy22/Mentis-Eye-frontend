@@ -2,6 +2,8 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  width: 100%;
+  /* gap: 5px; */
 }
 
 .arrow-icon {
@@ -30,14 +32,25 @@
   color: black;
 }
 
+.table-paper {
+  height: 70%;
+}
+
 .label {
   font-size: 18px;
   letter-spacing: 0.2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 65%;
 }
 
 .no-data-found-text {
   color: gray;
   text-align: center;
+}
+
+.table-section {
+  overflow-x: hidden !important;
 }
 
 .table-section::-webkit-scrollbar {
@@ -58,4 +71,7 @@
 /* Handle on hover */
 .table-section::-webkit-scrollbar-thumb:hover {
   background: #260e5f;
+}
+
+@media screen and (max-width: 600px) {
 }

@@ -17,6 +17,10 @@
   gap: 10px;
 }
 
+.close-icon {
+  display: none;
+}
+
 .user-name-text {
   font-size: 20px;
   font-weight: 600;
@@ -70,4 +74,17 @@
   font-weight: 700;
   cursor: pointer;
   letter-spacing: 0.3px;
+}
+
+@media screen and (max-width: 600px) {
+  .sidebar-container {
+    position: relative;
+  }
+
+  .close-icon {
+    display: inline-block;
+    position: absolute;
+    top: 15px;
+    right: 10px;
+  }
 }

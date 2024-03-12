@@ -1,4 +1,5 @@
 import {
+  Backdrop,
   Box,
   Button,
   FormControl,
@@ -10,6 +11,7 @@ import Sidebar from "../../components/Sidebar";
 import TableComponent from "../../components/TableComponent";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
+import MenuIcon from "@mui/icons-material/Menu";
 import { ChangeEvent, useEffect, useState } from "react";
 import { PARAMS_TYPE, getRecords } from "../../api/record.api";
 import PopupForm from "../../components/PopupForm";
@@ -50,6 +52,7 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState<boolean>(false);
+  const [openSidebar, setopenSidebar] = useState<boolean>(false);
 
   const { searchValue, selectedOption, sortBy, sortOrder, currentPage } =
     useSelector((state: RootState) => state.globalReducer);
@@ -128,8 +131,20 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
           setSearchParams={setSearchParams}
         />
       </Box>
+      <Backdrop open={openSidebar} sx={{ zIndex: 99999 }}>
+        <Box className="mobile-sidebar">
+          <Sidebar
+            handleClose={() => setopenSidebar(false)}
+            searchParams={searchParams}
+            setSearchParams={setSearchParams}
+          />
+        </Box>
+      </Backdrop>
       <Box className="main-content">
         <Box className="search-section">
+          <Box className="menu-icon-container">
+            <MenuIcon onClick={() => setopenSidebar(!openSidebar)} />
+          </Box>
           <FormControl>
             <TextField
               className="search-field"
@@ -153,7 +168,7 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
             onClick={() => setOpen(true)}
           >
             <AddIcon />
-            Create
+            {screen.availWidth > 600 && "Create"}
           </Button>
         </Box>
         <TableComponent />

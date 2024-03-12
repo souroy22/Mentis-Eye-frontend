@@ -6,7 +6,7 @@ type PROP_TYPE = {
 
 const Loader = ({ open }: PROP_TYPE) => {
   return (
-    <Backdrop open={open}>
+    <Backdrop open={open} sx={{ zIndex: 999999 }}>
       <CircularProgress color="primary" />
     </Backdrop>
   );

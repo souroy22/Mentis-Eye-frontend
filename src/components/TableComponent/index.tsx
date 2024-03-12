@@ -49,13 +49,27 @@ const TableComponent = () => {
   };
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden", height: "70%" }}>
+    <Paper sx={{ width: "100%", overflow: "hidden" }} className="table-paper">
       <TableContainer sx={{ maxHeight: "100%" }} className="table-section">
-        <Table stickyHeader aria-label="sticky table">
+        <Table
+          stickyHeader
+          aria-label="sticky table"
+          sx={{ tableLayout: "fixed" }}
+        >
           <TableHead>
             <TableRow>
               {columns.map((column) => (
-                <TableCell key={column.value}>
+                <TableCell
+                  // size="small"
+                  key={column.value}
+                  sx={
+                    {
+                      // padding: "0",
+                      // maxWidth: 100,
+                    }
+                  }
+                  width="33%"
+                >
                   <Box className="table-heading">
                     <Box className="label">{column.label}</Box>
                     {!sortBy || sortBy !== column.value ? (
@@ -100,7 +114,12 @@ const TableComponent = () => {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   {columns.map((column) => (
-                    <TableCell key={`${record.slug}-${column.value}`}>
+                    <TableCell
+                      // size="small"
+                      width="33%"
+                      key={`${record.slug}-${column.value}`}
+                      sx={{ overflow: "hidden", textOverflow: "ellipsis" }}
+                    >
                       {record[column.value]}
                     </TableCell>
                   ))}

@@ -15,15 +15,17 @@ import {
   setCurrentPage,
   setSelectedOption,
 } from "../../store/global/globalReducer";
-import "./style.css";
+import ClearIcon from "@mui/icons-material/Clear";
 import { setRecords } from "../../store/record/recordReducer";
+import "./style.css";
 
 type PROP_TYPE = {
   searchParams: any;
   setSearchParams: (value: any) => void;
+  handleClose?: () => void;
 };
 
-const Sidebar = ({}: PROP_TYPE) => {
+const Sidebar = ({ handleClose }: PROP_TYPE) => {
   const dispatch = useDispatch();
 
   const { searchValue, sortBy, sortOrder, selectedOption } = useSelector(
@@ -68,6 +70,7 @@ const Sidebar = ({}: PROP_TYPE) => {
       searchValue,
     });
     dispatch(setRecords(res));
+    handleClose && handleClose();
   };
 
   const handleLogout = async () => {
@@ -75,6 +78,7 @@ const Sidebar = ({}: PROP_TYPE) => {
       dispatch(setUser(null));
       await signout();
       customLocalStorage.deleteData("token");
+      handleClose && handleClose();
       notification.success("Logged out successfully!");
     } catch (error) {
       if (error instanceof Error) {
@@ -85,6 +89,12 @@ const Sidebar = ({}: PROP_TYPE) => {
 
   return (
     <Box className="sidebar-container">
+      <Box className="close-icon">
+        <ClearIcon
+          onClick={handleClose}
+          sx={{ fontSize: "30px !important", fontWeight: "800 !important" }}
+        />
+      </Box>
       <Box className="sidebar-top">
         <Avatar alt={user?.name}>{stringAvatar(user?.name || "")}</Avatar>
         <Box className="user-name-text">{user?.name}</Box>
