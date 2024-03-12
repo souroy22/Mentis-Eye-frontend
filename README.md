@@ -1,5 +1,35 @@
 # React + TypeScript + Vite
 
+# Shoppy Carts Project
+
+Welcome to the Shoppy Carts project! This is a web application for managing shopping carts.
+
+## Project Live Link
+
+You can access the live version of this project [here](https://mentis-eye.netlify.app).
+
+## Running Project Locally
+
+To run this project locally, make sure you have Node.js and npm installed on your machine. Then, follow these steps:
+
+1. Clone this repository to your local machine.
+2. Navigate to the project directory in your terminal.
+3. Install dependencies using npm:
+
+    ```bash
+    npm install
+    ```
+
+4. Once the dependencies are installed, you can start the project using the following command:
+
+    ```bash
+    npm run dev
+    ```
+
+5. Open your web browser and visit `http://localhost:5173` to view the project.
+
+# React + TypeScript + Vite
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
