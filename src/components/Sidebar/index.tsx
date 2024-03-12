@@ -1,41 +1,37 @@
 import { Fragment } from "react";
 import { Avatar, Box } from "@mui/material";
-import { USER_STATE_TYPE, sidebarOptions } from "../../App";
-import "./style.css";
 import { FiLogOut } from "react-icons/fi";
 import { ImDatabase } from "react-icons/im";
 import { signout } from "../../api/auth.api";
 import notification from "../../configs/notification";
 import { customLocalStorage } from "../../services/utils/localStorage";
-import { PARAMS_TYPE } from "../../api/record.api";
+import { getRecords } from "../../api/record.api";
+import { sidebarOptions } from "../../services/constants";
+import { setUser } from "../../store/user/userReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import {
+  SIDEBAR_OPTION_TYPE,
+  setCurrentPage,
+  setSelectedOption,
+} from "../../store/global/globalReducer";
+import "./style.css";
+import { setRecords } from "../../store/record/recordReducer";
 
 type PROP_TYPE = {
-  user: USER_STATE_TYPE;
-  setUser: (value: USER_STATE_TYPE) => void;
-  selectedOption: string;
-  setSelectedOption: (val: string) => void;
   searchParams: any;
   setSearchParams: (value: any) => void;
-  setCurrentPage: (val: number) => void;
-  handleGetRecords: (database: string, params: PARAMS_TYPE) => void;
-  sortOrder: "asc" | "desc" | null;
-  sortBy: string | null;
-  searchValue: string;
 };
 
-const Sidebar = ({
-  user,
-  setUser,
-  selectedOption,
-  setSelectedOption,
-  searchParams,
-  setSearchParams,
-  setCurrentPage,
-  handleGetRecords,
-  sortOrder,
-  sortBy,
-  searchValue,
-}: PROP_TYPE) => {
+const Sidebar = ({ searchParams, setSearchParams }: PROP_TYPE) => {
+  const dispatch = useDispatch();
+
+  const { searchValue, sortBy, sortOrder, selectedOption } = useSelector(
+    (state: RootState) => state.globalReducer
+  );
+
+  const { user } = useSelector((state: RootState) => state.userReducer);
+
   const stringAvatar = (name: string) => {
     if (!name?.trim()) {
       return "USER";
@@ -48,26 +44,25 @@ const Sidebar = ({
     return avatarText;
   };
 
-  const handleClick = (option: string) => {
-    if (option === selectedOption) {
+  const handleClick = async (option: SIDEBAR_OPTION_TYPE) => {
+    if (option.value === selectedOption.value) {
       return;
     }
     setSearchParams({ ...searchParams, database: option });
-    setSelectedOption(option);
-    setCurrentPage(1);
-    {
-      handleGetRecords(option, {
-        page: 1,
-        sortBy,
-        sortOrder,
-        searchValue,
-      });
-    }
+    dispatch(setSelectedOption(option));
+    dispatch(setCurrentPage(1));
+    const res = await getRecords(option.value, {
+      page: 1,
+      sortBy,
+      sortOrder,
+      searchValue,
+    });
+    dispatch(setRecords(res));
   };
 
   const handleLogout = async () => {
     try {
-      setUser(null);
+      dispatch(setUser(null));
       await signout();
       customLocalStorage.deleteData("token");
       notification.success("Logged out successfully!");
@@ -89,9 +84,9 @@ const Sidebar = ({
           <Fragment key={option.value}>
             <Box
               className={`sidebar-option ${
-                selectedOption === option.value ? "selected-option" : ""
+                selectedOption.value === option.value ? "selected-option" : ""
               }`}
-              onClick={() => handleClick(option.value)}
+              onClick={() => handleClick(option)}
             >
               <ImDatabase />
               <Box>{option.label}</Box>

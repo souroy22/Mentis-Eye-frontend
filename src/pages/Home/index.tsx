@@ -6,35 +6,27 @@ import {
   Pagination,
   TextField,
 } from "@mui/material";
-import { RECORD_TYPE, USER_STATE_TYPE } from "../../App";
 import Sidebar from "../../components/Sidebar";
 import TableComponent from "../../components/TableComponent";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
-import "./style.css";
-import { ChangeEvent, useState } from "react";
-import { PARAMS_TYPE } from "../../api/record.api";
+import { ChangeEvent, useEffect, useState } from "react";
+import { PARAMS_TYPE, getRecords } from "../../api/record.api";
 import PopupForm from "../../components/PopupForm";
 import UserForm from "../../components/UserForm";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setCurrentPage,
+  setSearchValue,
+} from "../../store/global/globalReducer";
+import { RootState } from "../../store/store";
+import "./style.css";
+import { setRecords } from "../../store/record/recordReducer";
+import notification from "../../configs/notification";
 
 type PROP_TYPE = {
-  user: USER_STATE_TYPE;
-  setUser: (value: USER_STATE_TYPE) => void;
-  selectedOption: string;
-  setSelectedOption: (val: string) => void;
   searchParams: any;
   setSearchParams: (value: any) => void;
-  searchValue: string;
-  setSearchValue: (val: string) => void;
-  records: RECORD_TYPE[];
-  totalCount: number;
-  currentPage: number;
-  setCurrentPage: (val: number) => void;
-  handleGetRecords: (database: string, params: PARAMS_TYPE) => void;
-  sortOrder: "asc" | "desc" | null;
-  sortBy: string | null;
-  setSortOrder: (val: "asc" | "desc" | null) => void;
-  setSortBy: (val: string | null) => void;
 };
 
 type SomeFunction = (...args: any[]) => void;
@@ -53,38 +45,56 @@ function useDebounce<Func extends SomeFunction>(func: Func, delay: number) {
   return debouncedFunction;
 }
 
-const Home = ({
-  user,
-  setUser,
-  selectedOption,
-  setSelectedOption,
-  searchParams,
-  setSearchParams,
-  searchValue,
-  setSearchValue,
-  records,
-  totalCount,
-  currentPage,
-  setCurrentPage,
-  handleGetRecords,
-  sortOrder,
-  sortBy,
-  setSortOrder,
-  setSortBy,
-}: PROP_TYPE) => {
+const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
+  const dispatch = useDispatch();
+
   const [open, setOpen] = useState<boolean>(false);
+
+  const { searchValue, selectedOption, sortBy, sortOrder, currentPage } =
+    useSelector((state: RootState) => state.globalReducer);
+
+  const { totalCount } = useSelector((state: RootState) => state.recordReducer);
+
+  const handleGetRecords = async (database: string, params: PARAMS_TYPE) => {
+    const res = await getRecords(database, params);
+    console.log("res", res);
+    dispatch(
+      setRecords({
+        records: res.records,
+        totalCount: Number(res.totalCount),
+      })
+    );
+  };
 
   const newFn = useDebounce(handleGetRecords, 300);
 
   const handleChange = (value: string) => {
-    setSearchValue(value);
-    newFn(selectedOption, {
+    dispatch(setSearchValue(value));
+    newFn(selectedOption.value, {
       page: 1,
       sortBy,
       sortOrder,
       searchValue: value,
     });
   };
+
+  const onLoad = async () => {
+    try {
+      const recordRes = await getRecords(selectedOption.value);
+      dispatch(
+        setRecords({
+          records: recordRes.records,
+          totalCount: Number(recordRes.totalCount),
+        })
+      );
+    } catch (error) {
+      notification.error("Something went wrong");
+    }
+  };
+
+  useEffect(() => {
+    onLoad();
+  }, []);
 
   return (
     <Box className="home-section">
@@ -95,29 +105,13 @@ const Home = ({
           title="Create New User"
           width="max-content"
         >
-          <UserForm
-            selectedOption={selectedOption}
-            sortOrder={sortOrder}
-            sortBy={sortBy}
-            searchValue={searchValue}
-            handleGetRecords={handleGetRecords}
-            handleClose={() => setOpen(false)}
-          />
+          <UserForm handleClose={() => setOpen(false)} />
         </PopupForm>
       )}
       <Box className="sidebar-section">
         <Sidebar
-          user={user}
-          setUser={setUser}
-          selectedOption={selectedOption}
-          setSelectedOption={setSelectedOption}
           searchParams={searchParams}
           setSearchParams={setSearchParams}
-          setCurrentPage={setCurrentPage}
-          handleGetRecords={handleGetRecords}
-          sortOrder={sortOrder}
-          sortBy={sortBy}
-          searchValue={searchValue}
         />
       </Box>
       <Box className="main-content">
@@ -148,31 +142,27 @@ const Home = ({
             Create
           </Button>
         </Box>
-        <TableComponent
-          records={records}
-          currentPage={currentPage}
-          handleGetRecords={handleGetRecords}
-          sortOrder={sortOrder}
-          sortBy={sortBy}
-          searchValue={searchValue}
-          setSortOrder={setSortOrder}
-          setSortBy={setSortBy}
-          selectedOption={selectedOption}
-        />
+        <TableComponent />
         <Box className="pagination-section">
           <Pagination
             page={currentPage}
             count={Math.ceil(totalCount / 10)}
             variant="outlined"
             color="primary"
-            onChange={(_: ChangeEvent<unknown>, page: number) => {
-              setCurrentPage(page);
-              handleGetRecords(selectedOption, {
+            onChange={async (_: ChangeEvent<unknown>, page: number) => {
+              dispatch(setCurrentPage(page));
+              const res = await getRecords(selectedOption.value, {
                 page,
                 sortBy,
                 sortOrder,
                 searchValue,
               });
+              dispatch(
+                setRecords({
+                  records: res.records,
+                  totalCount: Number(res.totalCount),
+                })
+              );
             }}
           />
         </Box>

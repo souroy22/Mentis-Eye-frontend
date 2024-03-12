@@ -13,6 +13,11 @@ export const getRecords = async (
   database: string,
   params: PARAMS_TYPE = { page: 1, limit: 10 }
 ) => {
+  params = Object.fromEntries(
+    Object.entries(params).filter(([_, value]) => {
+      return value !== null && value !== undefined;
+    })
+  );
   const res: any = await AXIOS.get(`/record/${database}`, { params });
   if (res.data.error) {
     return Promise.reject(res.data.error);

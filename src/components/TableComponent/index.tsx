@@ -5,24 +5,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { RECORD_TYPE } from "../../App";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import "./style.css";
 import { Box } from "@mui/material";
-import { PARAMS_TYPE } from "../../api/record.api";
-
-type PROP_TYPE = {
-  records: RECORD_TYPE[];
-  currentPage: number;
-  handleGetRecords: (database: string, params: PARAMS_TYPE) => void;
-  sortOrder: "asc" | "desc" | null;
-  sortBy: string | null;
-  setSortOrder: (val: "asc" | "desc" | null) => void;
-  setSortBy: (val: string | null) => void;
-  searchValue: string;
-  selectedOption: string;
-};
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import { setSortBy, setSortOrder } from "../../store/global/globalReducer";
+import "./style.css";
+import { getRecords } from "../../api/record.api";
+import { setRecords } from "../../store/record/recordReducer";
 
 const columns: { label: string; value: "name" | "userEmail" | "userPhone" }[] =
   [
@@ -31,27 +22,30 @@ const columns: { label: string; value: "name" | "userEmail" | "userPhone" }[] =
     { label: "Phone No.", value: "userPhone" },
   ];
 
-const TableComponent = ({
-  records,
-  currentPage,
-  handleGetRecords,
-  sortOrder,
-  sortBy,
-  setSortOrder,
-  setSortBy,
-  searchValue,
-  selectedOption,
-}: PROP_TYPE) => {
-  const handleSort = (value: string) => {
+const TableComponent = () => {
+  const dispatch = useDispatch();
+
+  const { searchValue, sortBy, sortOrder, selectedOption, currentPage } =
+    useSelector((state: RootState) => state.globalReducer);
+
+  const { records } = useSelector((state: RootState) => state.recordReducer);
+
+  const handleSort = async (value: string) => {
     const order = !sortOrder ? "asc" : sortOrder === "asc" ? "desc" : "asc";
-    setSortBy(value);
-    setSortOrder(order);
-    handleGetRecords(selectedOption, {
+    dispatch(setSortBy(value));
+    dispatch(setSortOrder(order));
+    const res = await getRecords(selectedOption.value, {
       page: currentPage,
       sortBy: value,
       sortOrder: order,
       searchValue,
     });
+    dispatch(
+      setRecords({
+        records: res.records,
+        totalCount: Number(res.totalCount),
+      })
+    );
   };
   return (
     <Paper sx={{ width: "100%", overflow: "hidden", height: "70%" }}>

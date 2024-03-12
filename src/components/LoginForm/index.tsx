@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Box, Button, CircularProgress, FormControl } from "@mui/material";
 import "./style.css";
-import { USER_STATE_TYPE } from "../../App";
 import TextInput from "../Textinput";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HttpsIcon from "@mui/icons-material/Https";
@@ -9,10 +8,8 @@ import notification from "../../configs/notification";
 import { signin } from "../../api/auth.api";
 import { Link } from "react-router-dom";
 import { customLocalStorage } from "../../services/utils/localStorage";
-
-type PROP_TYPE = {
-  setUser: (value: USER_STATE_TYPE) => void;
-};
+import { setUser } from "../../store/user/userReducer";
+import { useDispatch } from "react-redux";
 
 export type DATA_TYPE = {
   username: string;
@@ -24,13 +21,15 @@ type ERRORS_TYPE = {
   password: string | null;
 };
 
-const LoginForm = ({ setUser }: PROP_TYPE) => {
+const LoginForm = () => {
   const [data, setData] = useState<DATA_TYPE>({ username: "", password: "" });
   const [errors] = useState<ERRORS_TYPE>({
     username: null,
     password: null,
   });
   const [loading, setLoading] = useState<boolean>(false);
+
+  const dispatch = useDispatch();
 
   const handleChange = (name: string, value: string) => {
     setData({ ...data, [name]: value });
@@ -40,7 +39,7 @@ const LoginForm = ({ setUser }: PROP_TYPE) => {
     setLoading(true);
     try {
       const res = await signin(data);
-      setUser(res.user);
+      dispatch(setUser(res.user));
       customLocalStorage.setData("token", res.token);
     } catch (error) {
       if (error instanceof Error) {

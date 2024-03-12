@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Box, Button, CircularProgress, FormControl } from "@mui/material";
 import "./style.css";
-import { USER_STATE_TYPE } from "../../App";
 import TextInput from "../Textinput";
 import { signup } from "../../api/auth.api";
 import notification from "../../configs/notification";
@@ -10,10 +9,8 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HttpsIcon from "@mui/icons-material/Https";
 import { PiUserCircleGearDuotone } from "react-icons/pi";
 import { customLocalStorage } from "../../services/utils/localStorage";
-
-type PROP_TYPE = {
-  setUser: (value: USER_STATE_TYPE) => void;
-};
+import { useDispatch } from "react-redux";
+import { setUser } from "../../store/user/userReducer";
 
 export type SIGNUP_DATA_TYPE = {
   name: string;
@@ -27,7 +24,7 @@ type ERRORS_TYPE = {
   password: string | null;
 };
 
-const SignupForm = ({ setUser }: PROP_TYPE) => {
+const SignupForm = () => {
   const [data, setData] = useState<SIGNUP_DATA_TYPE>({
     name: "",
     username: "",
@@ -40,6 +37,7 @@ const SignupForm = ({ setUser }: PROP_TYPE) => {
   });
   const [loading, setLoading] = useState<boolean>(false);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleChange = (name: string, value: string) => {
@@ -50,7 +48,7 @@ const SignupForm = ({ setUser }: PROP_TYPE) => {
     setLoading(true);
     try {
       const res = await signup(data);
-      setUser(res.user);
+      dispatch(setUser(res.user));
       customLocalStorage.setData("token", res.token);
       navigate("/");
     } catch (error) {

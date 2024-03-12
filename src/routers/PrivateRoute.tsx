@@ -1,13 +1,12 @@
+import { useSelector } from "react-redux";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { RootState } from "../store/store";
 
-type PROP_TYPE = {
-  isLoggedIn: boolean;
-};
-
-const PrivateRoute = ({ isLoggedIn }: PROP_TYPE) => {
+const PrivateRoute = () => {
   const location = useLocation();
+  const { user } = useSelector((state: RootState) => state.userReducer);
 
-  if (isLoggedIn) {
+  if (!!user) {
     return <Outlet />;
   }
   return <Navigate to="/signin" state={{ prevUrl: location.pathname }} />;

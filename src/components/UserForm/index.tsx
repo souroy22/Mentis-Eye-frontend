@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -8,14 +9,16 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import "./style.css";
 import TextInput from "../Textinput";
-import { useState } from "react";
 import { PiUserCircleGearDuotone } from "react-icons/pi";
-import { PARAMS_TYPE, createRecord } from "../../api/record.api";
+import { createRecord, getRecords } from "../../api/record.api";
 import notification from "../../configs/notification";
-import { sidebarOptions } from "../../App";
 import { validateEmail } from "../../services/utils/validateEmail";
+import { sidebarOptions } from "../../services/constants";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import "./style.css";
+import { setRecords } from "../../store/record/recordReducer";
 
 export type CREATE_USER_DATA = {
   name: string;
@@ -33,34 +36,30 @@ type ERRORS_TYPE = {
 
 type PROP_TYPE = {
   handleClose: () => void;
-  selectedOption: string;
-  handleGetRecords: (database: string, params: PARAMS_TYPE) => void;
-  sortOrder: "asc" | "desc" | null;
-  sortBy: string | null;
-  searchValue: string;
 };
 
-const UserForm = ({
-  handleClose,
-  selectedOption,
-  handleGetRecords,
-  searchValue,
-  sortOrder,
-  sortBy,
-}: PROP_TYPE) => {
+const UserForm = ({ handleClose }: PROP_TYPE) => {
+  const { searchValue, sortBy, sortOrder, selectedOption } = useSelector(
+    (state: RootState) => state.globalReducer
+  );
+
   const [data, setData] = useState<CREATE_USER_DATA>({
     name: "",
     userEmail: "",
     userPhone: "",
     database: null,
   });
+
   const [errors] = useState<ERRORS_TYPE>({
     name: null,
     userEmail: null,
     userPhone: null,
     database: null,
   });
+
   const [loading, setLoading] = useState<boolean>(false);
+
+  const dispatch = useDispatch();
 
   const handleChange = (name: string, value: string) => {
     setData({ ...data, [name]: value });
@@ -75,12 +74,18 @@ const UserForm = ({
     try {
       await createRecord(data);
       notification.success("Successfully created record");
-      handleGetRecords(selectedOption, {
+      const res = await getRecords(selectedOption.value, {
         page: 1,
         searchValue,
         sortBy,
         sortOrder,
       });
+      dispatch(
+        setRecords({
+          records: res.records,
+          totalCount: Number(res.totalCount),
+        })
+      );
       handleClose();
     } catch (error) {
       if (error instanceof Error) {
