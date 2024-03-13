@@ -6,7 +6,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
@@ -65,35 +64,19 @@ const TableComponent = () => {
           <TableHead>
             <TableRow>
               {columns.map((column) => (
-                <TableCell
-                  // size="small"
-                  key={column.value}
-                  sx={
-                    {
-                      // padding: "0",
-                      // maxWidth: 100,
-                    }
-                  }
-                  width="33%"
-                >
+                <TableCell key={column.value} width="33%">
                   <Box className="table-heading">
                     <Box className="label">{column.label}</Box>
-                    {!sortBy || sortBy !== column.value ? (
-                      <ArrowUpwardIcon
-                        className="arrow-icon"
-                        onClick={() => handleSort(column.value)}
-                      />
-                    ) : sortOrder === "asc" ? (
-                      <ArrowUpwardIcon
-                        className="arrow-icon"
-                        onClick={() => handleSort(column.value)}
-                      />
-                    ) : (
-                      <ArrowDownwardIcon
-                        className="arrow-icon"
-                        onClick={() => handleSort(column.value)}
-                      />
-                    )}
+                    <ArrowUpwardIcon
+                      className={`arrow-icon ${
+                        sortBy === column.value ? "active" : ""
+                      } ${
+                        sortOrder === "desc" && sortBy === column.value
+                          ? "rotate-icon"
+                          : ""
+                      }`}
+                      onClick={() => handleSort(column.value)}
+                    />
                   </Box>
                 </TableCell>
               ))}

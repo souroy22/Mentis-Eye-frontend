@@ -101,6 +101,15 @@
   }
 
   .search-field {
+    width: 200px;
+  }
+  .search-field:focus-within {
+    width: 250px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .search-field {
     width: 150px;
   }
   .search-field:focus-within {

@@ -85,13 +85,31 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
   const handleChange = (value: string) => {
     dispatch(setSearchValue(value));
     addQuery("search", value);
-
     newFn(selectedOption.value, {
       page: 1,
       sortBy,
       sortOrder,
       searchValue: value,
     });
+  };
+
+  const handlePageChange = async (_: ChangeEvent<unknown>, page: number) => {
+    dispatch(setLoading(true));
+    addQuery("page", String(page));
+    dispatch(setCurrentPage(page));
+    const res = await getRecords(selectedOption.value, {
+      page,
+      sortBy,
+      sortOrder,
+      searchValue,
+    });
+    dispatch(
+      setRecords({
+        records: res.records,
+        totalCount: Number(res.totalCount),
+      })
+    );
+    dispatch(setLoading(false));
   };
 
   const onLoad = async () => {
@@ -196,22 +214,7 @@ const Home = ({ searchParams, setSearchParams }: PROP_TYPE) => {
             count={Math.ceil(totalCount / 10)}
             variant="outlined"
             color="primary"
-            onChange={async (_: ChangeEvent<unknown>, page: number) => {
-              addQuery("page", String(page));
-              dispatch(setCurrentPage(page));
-              const res = await getRecords(selectedOption.value, {
-                page,
-                sortBy,
-                sortOrder,
-                searchValue,
-              });
-              dispatch(
-                setRecords({
-                  records: res.records,
-                  totalCount: Number(res.totalCount),
-                })
-              );
-            }}
+            onChange={handlePageChange}
           />
         </Box>
       </Box>
