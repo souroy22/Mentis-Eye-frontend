@@ -2,7 +2,7 @@
 
 # MANTIS EYE PROJECT
 
-Welcome to the Shoppy Carts project! This is a web application for managing MANTIS EYE PROJECT.
+Welcome to the MANTIS EYE PROJECT! This is a web application for managing 3 DATABASES.
 
 ## Project Live Link
 
