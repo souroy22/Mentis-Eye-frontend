@@ -1,8 +1,8 @@
 # React + TypeScript + Vite
 
-# Shoppy Carts Project
+# MANTIS EYE PROJECT
 
-Welcome to the Shoppy Carts project! This is a web application for managing shopping carts.
+Welcome to the Shoppy Carts project! This is a web application for managing MANTIS EYE PROJECT.
 
 ## Project Live Link
 
